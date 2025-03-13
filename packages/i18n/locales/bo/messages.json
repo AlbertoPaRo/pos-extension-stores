@@ -1,0 +1,30 @@
+{
+  "extensionDescription": {
+    "description": "Descripcion de extension",
+    "message": "Extension de Chrome para POS de Tiendas Fisicas"
+  },
+  "extensionName": {
+    "description": "POS",
+    "message": "POS de Tiendas Fisicas"
+  },
+  "toggleTheme": {
+    "message": "Toggle theme"
+  },
+  "loading": {
+    "message": "Cargando..."
+  },
+  "greeting": {
+    "description": "Saludos",
+    "message": "Hola, My name is $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "John Doe"
+      }
+    }
+  },
+  "hello": {
+    "description": "Placeholder example",
+    "message": "Hello $1"
+  }
+}
