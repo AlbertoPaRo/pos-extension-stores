@@ -3,32 +3,46 @@ import App from '@src/App';
 // @ts-expect-error Because file doesn't exist before build
 import tailwindcssOutput from '../dist/tailwind-output.css?inline';
 
-const root = document.createElement('div');
-root.id = 'chrome-extension-boilerplate-react-vite-content-view-root';
+let contactData: any = null;
 
-document.body.append(root);
+chrome.runtime.onMessage.addListener(message => {
+  if (message.type === 'HasEddressData') {
+    injectReactComponent(message.payload);
+  }
+});
 
-const rootIntoShadow = document.createElement('div');
-rootIntoShadow.id = 'shadow-root';
+const injectReactComponent = (hasEddressData: boolean) => {
+  const contactDesc = document.querySelector('.contact-desc');
+  const titleElement = contactDesc?.querySelector('h1');
 
-const shadowRoot = root.attachShadow({ mode: 'open' });
+  if (!contactDesc || !titleElement) {
+    console.log('⚠️ No se encontró .contact-desc o h1, abortando.');
+    return;
+  }
 
-if (navigator.userAgent.includes('Firefox')) {
-  /**
-   * In the firefox environment, adoptedStyleSheets cannot be used due to the bug
-   * @url https://bugzilla.mozilla.org/show_bug.cgi?id=1770592
-   *
-   * Injecting styles into the document, this may cause style conflicts with the host page
-   */
-  const styleElement = document.createElement('style');
-  styleElement.innerHTML = tailwindcssOutput;
-  shadowRoot.appendChild(styleElement);
-} else {
-  /** Inject styles into shadow dom */
-  const globalStyleSheet = new CSSStyleSheet();
-  globalStyleSheet.replaceSync(tailwindcssOutput);
-  shadowRoot.adoptedStyleSheets = [globalStyleSheet];
-}
+  let root = document.querySelector('#chrome-extension-root');
 
-shadowRoot.appendChild(rootIntoShadow);
-createRoot(rootIntoShadow).render(<App />);
+  if (root) {
+    console.log('🔄 Eliminando React y reiniciando...');
+    root.remove();
+  }
+
+  root = document.createElement('div');
+  root.id = 'chrome-extension-root';
+  titleElement.insertAdjacentElement('afterend', root);
+
+  const shadowRoot = root.attachShadow({ mode: 'open' });
+  const rootIntoShadow = document.createElement('div');
+  rootIntoShadow.id = 'shadow-root';
+
+  try {
+    const globalStyleSheet = new CSSStyleSheet();
+    globalStyleSheet.replaceSync(tailwindcssOutput);
+    shadowRoot.adoptedStyleSheets = [globalStyleSheet];
+  } catch (error) {
+    console.error('❌ Error cargando Tailwind CSS:', error);
+  }
+
+  shadowRoot.appendChild(rootIntoShadow);
+  createRoot(rootIntoShadow).render(<App contactData={contactData} hasEddressData={hasEddressData} />);
+};

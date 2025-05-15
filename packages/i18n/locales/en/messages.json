@@ -1,11 +1,11 @@
 {
   "extensionDescription": {
-    "description": "Extension description",
-    "message": "Chrome extension boilerplate developed with Vite, React and Typescript"
+    "description": "Extension Description",
+    "message": "Chrome Extension for Physical Store POS"
   },
   "extensionName": {
-    "description": "Extension name",
-    "message": "Chrome extension boilerplate"
+    "description": "POS",
+    "message": "Physical Store POS"
   },
   "toggleTheme": {
     "message": "Toggle theme"

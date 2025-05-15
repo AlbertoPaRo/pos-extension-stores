@@ -1,19 +1,61 @@
-import { useEffect } from 'react';
-import { ToggleButton } from '@extension/ui';
-import { exampleThemeStorage } from '@extension/storage';
-import { t } from '@extension/i18n';
+// import { Button } from "@extension/ui";
 
-export default function App() {
-  useEffect(() => {
-    console.log('content ui loaded');
-  }, []);
+// const App = ({ hasEddressData }: { contactData: any; hasEddressData: boolean }) => {
+//   const openSidePanel = async () => {
+//     try {
+//       await chrome.runtime.sendMessage({ action: "openSidePanel" });
+//     } catch (error) {
+//       console.error("Error al abrir el panel lateral:", error);
+//     }
+//   };
+//   return (
+//     <>
+//       <div>{hasEddressData ? (<b>Usuario Eddress: Si</b>) : (<div className="h-full">
+//         <Button
+//           variant="destructive"
+//           className="h-11 text-lg font-bold w-64 rounded-lg hover:bg-[#01579B] bg-[#2196F3]"
+//           onClick={openSidePanel}
+//         >
+//           Agregar Usuario a Eddress
+//         </Button>
+//       </div>)}</div>
+//     </>
+//   );
+// }
+
+// export default App;
+
+import { Button } from '@extension/ui';
+
+const App = ({ hasEddressData }: { contactData: any; hasEddressData: boolean }) => {
+  const openSidePanel = async () => {
+    try {
+      // Abre el panel
+      await chrome.runtime.sendMessage({ action: 'openSidePanel' });
+
+      // Ejecuta extracción de contacto desde el DOM real
+      await chrome.runtime.sendMessage({ action: 'extractContactFromDOM' });
+    } catch (error) {
+      console.error('Error al abrir el panel o extraer contacto:', error);
+    }
+  };
 
   return (
-    <div className="flex items-center justify-between gap-2 rounded bg-blue-100 px-2 py-1">
-      <div className="flex gap-1 text-blue-500">
-        Edit <strong className="text-blue-700">pages/content-ui/src/app.tsx</strong> and save to reload.
-      </div>
-      <ToggleButton onClick={exampleThemeStorage.toggle}>{t('toggleTheme')}</ToggleButton>
+    <div>
+      {hasEddressData ? (
+        <b>Usuario Eddress: Sí</b>
+      ) : (
+        <div className="h-full">
+          <Button
+            variant="destructive"
+            className="h-11 text-lg font-bold w-64 rounded-lg hover:bg-[#01579B] bg-[#2196F3]"
+            onClick={openSidePanel}>
+            Agregar Usuario a Eddress
+          </Button>
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default App;
